@@ -3,11 +3,13 @@ import { turnContext } from "../context/turnContext";
 
 function FlipCoin() {
   const TURN = turnContext();
-  
+  const { collectionTruthandDare } = turnContext();
+
   const handleRandomze = () => {
-    // const hold = Math.floor(Math.random() * TruthDare.length);
     const hold = Math.floor(Math.random() * TURN?.TruthDare.length);
-    console.log(hold);
+    TURN.setTurn(hold ? true : false);
+    if (hold) collectionTruthandDare.setTruth((prev) => [...prev, 1]);
+    else collectionTruthandDare.setForbidden((prev) => [...prev, 1]);
   };
 
   return (
