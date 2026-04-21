@@ -18,7 +18,7 @@ function useWeatherData() {
   const [icon, setIcon] = useState<string>("");
   const [isLoading, setLoading] = useState<Boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>("");
-
+  
   useEffect(() => {
     if (cityDataOrError instanceof Error) {
       setErrorMsg(cityDataOrError.message);
@@ -29,14 +29,14 @@ function useWeatherData() {
     const { City } = cityDataOrError;
 
     const fetchData = async () => {
-      setLoading(true);
       try {
-        setTimeout(() =>{
-
-        },2000)
-        const res = await axios.get(
-          `https://api.weatherapi.com/v1/current.json?key=2b732fe7fcf5481fb8a91507262004&q=${City}&aqi=no`,
-        );
+        setLoading(true);
+        const [res] = await Promise.all([
+          axios.get(
+            `https://api.weatherapi.com/v1/current.json?key=2b732fe7fcf5481fb8a91507262004&q=${City}&aqi=no`,
+          ),
+          new Promise((res) => setTimeout(res, 2000)),
+        ]);
         setName({
           name: res.data.location.name,
           region: res.data.location.region,

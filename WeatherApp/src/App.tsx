@@ -8,7 +8,7 @@ import useWeatherData from "./Api/WeatherData";
 function App() {
   const [City, setCity] = useState<string>("");
   const { isLoading } = useWeatherData();
-
+ 
   return (
     <CityName.Provider value={{ City, setCity }}>
       <div className="grid place-items-center h-screen">
