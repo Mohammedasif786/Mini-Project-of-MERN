@@ -1,14 +1,18 @@
-// import { useState } from "react";
 import { useCityName } from "../context/LocationFinder";
-//import useWeatherData from "../Api/WeatherData";
 
 function SearchCity() {
-  const setCity  = useCityName();
+  const cityData = useCityName();
 
-  if (!(setCity instanceof Error)) {
-    console.error("It hits Error! ⚠");
-    return null;
+  if (cityData instanceof Error) {
+    console.error("Context error:", cityData.message);
+    return (
+      <div className="text-red-500 text-center">
+        Error loading city context. Please refresh.
+      </div>
+    );
   }
+
+  const { setCity } = cityData;
 
   return (
     <div>
@@ -25,3 +29,4 @@ function SearchCity() {
 }
 
 export default SearchCity;
+

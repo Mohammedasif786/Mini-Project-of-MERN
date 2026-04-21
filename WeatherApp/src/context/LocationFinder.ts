@@ -6,7 +6,7 @@ import {
 } from "react";
 
 interface CityData {
-  City: string | undefined;
+  City: string;
   setCity: Dispatch<SetStateAction<string>>;
 }
 export const CityName = createContext<CityData | undefined>(undefined);
