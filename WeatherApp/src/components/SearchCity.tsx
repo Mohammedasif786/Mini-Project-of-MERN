@@ -1,19 +1,19 @@
 import { useCityName } from "../context/LocationFinder";
 
 function SearchCity() {
-  const cityData = useCityName();
+  const cityDataOrError = useCityName();
 
-  if (cityData instanceof Error) {
-    console.error("Context error:", cityData.message);
+  if (cityDataOrError instanceof Error) {
+    console.error("Context error:", cityDataOrError.message);
     return (
-      <div className="text-red-500 text-center">
-        Error loading city context. Please refresh.
+      <div className="text-red-500 text-center p-4">
+        Error loading city context: {cityDataOrError.message}. Please refresh.
       </div>
     );
   }
 
-  const { setCity } = cityData;
-
+  // Now cityDataOrError narrowed to CityData
+  const { setCity } = cityDataOrError;
   return (
     <div>
       <input
