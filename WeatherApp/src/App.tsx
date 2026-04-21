@@ -2,9 +2,13 @@ import SearchCity from "./components/SearchCity";
 import Main from "./components/Main";
 import { useState } from "react";
 import { CityName } from "./context/LocationFinder";
-// import LoadingScript from "./components/LoadingScript";
+import LoadingScript from "./components/LoadingScript";
+import useWeatherData from "./Api/WeatherData";
+
 function App() {
   const [City, setCity] = useState<string>("");
+  const { isLoading } = useWeatherData();
+
   return (
     <CityName.Provider value={{ City, setCity }}>
       <div className="grid place-items-center h-screen">
@@ -12,8 +16,7 @@ function App() {
           <h1 className=" text-blue-500 font-tertiary font-bold tracking-wide ease-in duration-300 text-4xl">
             Weather App - Md Asif
           </h1>
-          {/* <LoadingScript/> */}
-          <SearchCity />
+          {!isLoading ? <SearchCity /> : <LoadingScript />}
           <Main />
         </div>
       </div>

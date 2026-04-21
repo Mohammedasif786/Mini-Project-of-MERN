@@ -10,7 +10,6 @@ interface NameWithRegion {
 function useWeatherData() {
   const cityDataOrError = useCityName();
   const [name, setName] = useState<NameWithRegion>();
-  // const [location, setLocation] = useState<string>("");
   const [condition, setCondition] = useState<string>("");
   const [temp, setTemp] = useState<number | null>(null);
   const [feelLike, setFeelLike] = useState<number | null>();
@@ -32,6 +31,9 @@ function useWeatherData() {
     const fetchData = async () => {
       setLoading(true);
       try {
+        setTimeout(() =>{
+
+        },2000)
         const res = await axios.get(
           `https://api.weatherapi.com/v1/current.json?key=2b732fe7fcf5481fb8a91507262004&q=${City}&aqi=no`,
         );
