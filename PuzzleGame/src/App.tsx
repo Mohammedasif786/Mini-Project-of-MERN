@@ -1,8 +1,7 @@
+import Game from "./components/Game";
 
 function App() {
-  return (
-    <div>App</div>
-  )
+  return <Game />;
 }
 
-export default App
+export default App;
