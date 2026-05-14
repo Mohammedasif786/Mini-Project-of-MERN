@@ -1,30 +1,26 @@
-import React, { createContext, useContext, type SetStateAction } from "react";
+import { createContext, useContext } from "react";
 
-interface UserWants {
-  Title: string;
-  Target: string;
-  Category: "Meeting" | "Interview" | "Party" | "Others" | null;
-}
-interface TimeFormat {
-  Day: number;
-  Hour: number;
-  Minute: number;
-  Sec: number;
+export type Category = "Meeting" | "Interview" | "Party" | "Others";
+
+export interface EventItem {
+  id: number;
+  title: string;
+  targetISO: string; // ISO string produced from <input type="date" />
+  category: Category;
+  color: string;
 }
 
-interface counterApp {
-  counter: number[];
-  setCounter: React.Dispatch<SetStateAction<number[]>>;
-  userData: UserWants;
-  setUserDate: React.Dispatch<SetStateAction<UserWants>>;
-  target: TimeFormat;
-  setTarget: React.Dispatch<SetStateAction<TimeFormat>>;
+interface EventContextValue {
+  events: EventItem[];
+  addEvent: (input: Omit<EventItem, "id">) => void;
+  removeEvent: (id: number) => void;
 }
 
-export const EventAdd = createContext<counterApp | null>(null);
+export const EventAdd = createContext<EventContextValue | null>(null);
 
 export function useEventAdd() {
   const hold = useContext(EventAdd);
   if (hold === null) return new Error("Please Add the new Events");
   return hold;
 }
+

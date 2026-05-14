@@ -1,80 +1,53 @@
 import {
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   Stack,
   TextField,
-  Button,
 } from "@mui/material";
+import { useMemo, useState } from "react";
+import { randomColorGenerator } from "../Tools/Tools";
+import { type Category } from "../Context/AddItem";
 import { useEventAdd } from "../Context/AddItem";
-import { useEffect, useState } from "react";
 
-function UserInputs(this: any) {
-  const [date] = useState(() => new Date()); // now Date!
+function UserInputs() {
   const context = useEventAdd();
   if (context instanceof Error) return null;
-  const { userData, setUserDate, counter, setCounter, target, setTarget } = context;
 
-  const TimeFormat: { Sec: number; Minute: number; Hour: number; Day: number } =
-    {
-      Sec: 1000,
-      Minute: 1000 * 60,
-      Hour: 1000 * 60 * 60,
-      Day: 1000 * 60 * 60 * 24,
-    };
+  const { addEvent } = context;
 
-    // console.log(userData.Target);
-    // console.log(target);
-  useEffect(() => {
-    const Timeout = setInterval(() => {
-      const Target = new Date(userData.Target);
-      const diff = Target.getTime() - date.getTime();
-      if (diff <= 0) clearInterval(Timeout);
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState<Category>("Meeting");
+  const [targetISO, setTargetISO] = useState("");
 
-      console.log({x: Math.floor(8923.2)});
-      setTarget({
-        Day: Math.floor(diff / TimeFormat.Day),
-        Hour: Math.floor((diff % TimeFormat.Day) / TimeFormat.Hour),
-        Minute: Math.floor((diff % TimeFormat.Hour) / TimeFormat.Minute),
-        Sec: Math.floor((diff % TimeFormat.Minute) / TimeFormat.Sec),
-      });
-    }, 1000);
-  }, []);
+  const canAdd = useMemo(() => {
+    return title.trim().length > 0 && targetISO.trim().length > 0;
+  }, [title, targetISO]);
 
   return (
-    <div className=" grid place-content-center h-96 wrap-normal space-y-3">
+    <div className="grid place-content-center h-96 wrap-normal space-y-3">
       <p className="text-2xl font-bold text-green-700">
-        GeeksForGeeks CountDown Timer
+        Event CountDown Timer
       </p>
+
       <Stack direction={"column"} gap={2}>
         <TextField
           variant="outlined"
-          onChange={(e) =>
-            setUserDate((prev) => ({ ...prev, Title: e.target.value }))
-          }
           label="Timer Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
+
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">
-            Select a Category
-          </InputLabel>
+          <InputLabel id="category-label">Select a Category</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={userData.Category}
+            labelId="category-label"
+            id="category-select"
+            value={category}
             label="Select a Category"
-            // onChange={handleChange}
-            onChange={(e) =>
-              setUserDate((prev) => ({
-                ...prev,
-                Category: e.target.value as
-                  | "Meeting"
-                  | "Interview"
-                  | "Party"
-                  | "Others",
-              }))
-            }
+            onChange={(e) => setCategory(e.target.value as Category)}
           >
             <MenuItem value={"Meeting"}>Meeting</MenuItem>
             <MenuItem value={"Interview"}>Interview</MenuItem>
@@ -82,27 +55,39 @@ function UserInputs(this: any) {
             <MenuItem value={"Others"}>Others</MenuItem>
           </Select>
         </FormControl>
+
         <TextField
-          label="--:--"
+          label="Target Date"
           type="date"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          onChange={(e) =>
-            setUserDate((prev) => ({ ...prev, Target: e.target.value }))
-          }
+          InputLabelProps={{ shrink: true }}
+          value={targetISO}
+          onChange={(e) => setTargetISO(e.target.value)}
         />
       </Stack>
+
       <Button
         variant="contained"
-        onClick={() => setCounter((c) => [...c, 1])}
+        onClick={() => {
+          if (!canAdd) return;
+          addEvent({
+            title: title.trim(),
+            category,
+            targetISO,
+            color: randomColorGenerator(),
+          });
+          setTitle("");
+          setTargetISO("");
+          setCategory("Meeting");
+        }}
         sx={{ margin: "10px" }}
         color="primary"
+        disabled={!canAdd}
       >
-        Add Event [{counter.join(", ")}]
+        Add Event
       </Button>
     </div>
   );
 }
 
 export default UserInputs;
+
