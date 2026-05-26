@@ -1,10 +1,50 @@
+import { useEffect } from "react";
 import { Paper, Typography } from "@mui/material";
+import {
+  useDataHandler,
+  type TimeFomartDisplay,
+} from "../context/timerHandling";
 
 type TimerDisplayProps = {
-  displayTime: string;
+  displayTime: TimeFomartDisplay;
 };
 
 export default function TimerDisplay({ displayTime }: TimerDisplayProps) {
+  const { startTime, setStartTime, isRunning  } =
+    useDataHandler(displayTime);
+  const { Hour, Minute, Second, nanoSec } = startTime ?? displayTime;
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setStartTime((prev) => {
+        const current = prev ?? displayTime;
+        const { Hour, Minute, Second, nanoSec } = current;
+
+        if (Hour === 59 && Minute === 59 && Second === 59 && nanoSec === 99) {
+          return { Hour: 0, Minute: 0, Second: 0, nanoSec: 0 };
+        }
+
+        const nextNano = nanoSec + 1;
+        const nextSecond = nextNano > 99 ? Second + 1 : Second;
+        const nextMinute = nextSecond > 59 ? Minute + 1 : Minute;
+        const nextHour = nextMinute > 59 ? Hour + 1 : Hour;
+
+        if (!isRunning) {
+          return { Hour, Minute, Second, nanoSec };
+        }
+
+        return {
+          Hour: nextHour > 59 ? 0 : nextHour,
+          Minute: nextMinute > 59 ? 0 : nextMinute,
+          Second: nextSecond > 59 ? 0 : nextSecond,
+          nanoSec: nextNano > 99 ? 0 : nextNano,
+        };
+      });
+    }, 10);
+
+    return () => window.clearInterval(interval);
+  }, [displayTime, isRunning, setStartTime]);
+
   return (
     <Paper
       variant="outlined"
@@ -27,7 +67,12 @@ export default function TimerDisplay({ displayTime }: TimerDisplayProps) {
           letterSpacing: "0.1em",
         }}
       >
-        {displayTime}
+        {`${Hour.toString().padStart(2, "0")}:${Minute.toString().padStart(
+          2,
+          "0",
+        )}:${Second.toString().padStart(2, "0")}:${nanoSec
+          .toString()
+          .padStart(2, "0")}`}
       </Typography>
     </Paper>
   );

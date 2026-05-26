@@ -1,4 +1,5 @@
 import { Box, Button } from "@mui/material";
+import { useDataHandler } from "../context/timerHandling";
 
 type ControlBtnsProps = {
   buttons: string[];
@@ -9,6 +10,8 @@ export default function ControlBtns({
   buttons,
   onAction = () => {},
 }: ControlBtnsProps) {
+  let dummy = {Hour: 0, Minute: 0, Second: 0, nanoSec: 0};
+  const {setIsRunning, setStartEngine, startEngine} = useDataHandler(dummy);
   return (
     <Box className="flex gap-2">
       {buttons.map((label) => (
@@ -16,7 +19,17 @@ export default function ControlBtns({
           key={label}
           variant="contained"
           disableElevation
-          onClick={() => onAction(label)}
+          disabled={(startEngine && label === "Start")? true : false}
+          onClick={() => {
+            if (label === "Pause") {
+              setIsRunning((prev) => !prev);
+            }
+            if(label === "Start") {
+              setStartEngine(true);
+              setIsRunning(true);
+            }
+            onAction(label);
+          }}
           sx={{
             flex: 1,
             bgcolor: "rgba(59, 130, 246, 0.88)",

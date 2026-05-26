@@ -1,9 +1,39 @@
-const [elapsed, setElapsed] = useState<number>(0);
+import { createContext, useContext } from "react";
+export interface LapEntry {
+  id: number;
+  label: string;
+  lapTime: number;
+  totalTime: number;
+}
 
-const [isRunning, setIsRunning] = useState<boolean>(false);
+export interface TimeFomartDisplay {
+  nanoSec: number;
+  Second: number;
+  Minute: number;
+  Hour: number;
+}
 
-const [laps, setLaps] = useState<LapEntry[]>([]);
+export interface TimeContextType {
+  elapsed: number;
+  setElapsed: React.Dispatch<React.SetStateAction<number>>;
+  isRunning: boolean;
+  setIsRunning: React.Dispatch<React.SetStateAction<boolean>>;
+  startEngine: boolean;
+  setStartEngine: React.Dispatch<React.SetStateAction<boolean>>;
+  laps: LapEntry[];
+  setLaps: React.Dispatch<React.SetStateAction<LapEntry[]>>;
+  startTime: TimeFomartDisplay | null;
+  setStartTime: React.Dispatch<React.SetStateAction<TimeFomartDisplay | null>>;
+  intervalId: number | null;
+  setIntervalId: React.Dispatch<React.SetStateAction<number | null>>;
+}
 
-const [startTime, setStartTime] = useState<number | null>(null);
+export const TimeData = createContext<TimeContextType | null>(null);
 
-const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+export function useDataHandler(p0: { nanoSec: number; Second: number; Minute: number; Hour: number; }) {
+  const context = useContext(TimeData);
+  if (!context) {
+    throw new Error("useDataHandler must be used within a TimeDataProvider");
+  }
+  return context;
+}

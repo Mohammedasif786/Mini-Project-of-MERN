@@ -11,10 +11,12 @@ import {
 import ControlBtns from "./ControlBtns";
 import LapTables from "./LapTables";
 import TimerDisplay from "./TimerDisplay";
+import { useDataHandler } from "../context/timerHandling";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
-const displayTime = "00:00:15:55";
+const displayTime = "00:00:00:00";
+const emptyDisplay = { Hour: 0, Minute: 0, Second: 0, nanoSec: 0 };
 const controlButtons = ["Start", "Pause", "Lap", "Reset"];
 
 const mockLaps = [
@@ -29,6 +31,16 @@ const mockLaps = [
 // ─── Blueprint ────────────────────────────────────────────────────────────────
 
 export default function StopwatchBlueprint() {
+  const initialTime = {
+    nanoSec: Number(displayTime.split(":").at(3)),
+    Second: Number(displayTime.split(":").at(2)),
+    Minute: Number(displayTime.split(":").at(1)),
+    Hour: Number(displayTime.split(":").at(0)),
+  };
+
+  const { startTime, startEngine } = useDataHandler(initialTime);
+  const timerDisplayValue = startTime ?? initialTime;
+
   return (
     <Box
       className="min-h-screen flex items-center justify-center p-6"
@@ -54,7 +66,9 @@ export default function StopwatchBlueprint() {
         }}
       >
         <Box className="px-6 pt-8 pb-4 bg-transparent">
-          <TimerDisplay displayTime={displayTime} />
+          <TimerDisplay
+            displayTime={startEngine ? timerDisplayValue : emptyDisplay}
+          />
           <ControlBtns
             buttons={controlButtons}
             onAction={(label) => console.log(label)}
