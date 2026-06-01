@@ -12,8 +12,7 @@ import ControlBtns from "./ControlBtns";
 import LapTables from "./LapTables";
 import TimerDisplay from "./TimerDisplay";
 import { useDataHandler } from "../context/timerHandling";
-import { useEffect, useState } from "react";
-import { Lan } from "@mui/icons-material";
+import { useState } from "react";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
@@ -50,26 +49,24 @@ export default function StopwatchBlueprint() {
   const { startTime, startEngine, laps, setLaps, Edits, setEdit } =
     useDataHandler(initialTime);
   const [labelName, setLabelName] = useState("");
-  const [Lname, setLName] = useState<string[]>([]);
+  const [editingLapId, setEditingLapId] = useState<number | null>(null);
+
   const handleClick = () => {
-    setEdit(false);
-    console.log(Lname);
-    console.log(labelName);
+    if (editingLapId === null) return;
+
     setLaps((prev) =>
-      prev.map((lap, index) =>
-        lap.id === index ? { ...lap, label: Lname[index] } : lap,
+      prev.map((lap) =>
+        lap.id === editingLapId ? { ...lap, label: labelName } : lap,
       ),
     );
-    console.log(laps.map((v) => v.label));
+    setEdit(false);
+    setEditingLapId(null);
   };
+
   const onEdit = (lap: mockLaps) => {
+    setEditingLapId(lap.id);
+    setLabelName(lap.label);
     setEdit(true);
-    // setLName((prev) => [...prev, lap.label]);
-    setLName((prev) => {
-      const newLName = [...prev];
-      newLName[lap.id] = lap.label;
-      return newLName;
-    });
   };
   const timerDisplayValue = startTime ?? initialTime;
 
@@ -128,26 +125,21 @@ export default function StopwatchBlueprint() {
           <TextField
             fullWidth
             label="Label"
-            defaultValue="Lap 1"
+            value={labelName}
             size="small"
-            // onChange={(e) => setLName((prev) => [...prev, e.target.value])}
-            // onChange={(e) => setLName((prev) => [...prev, e.target.value])}
             onChange={(e) => setLabelName(e.target.value)}
-            // onChange={(e) =>
-            //   setLName1((prev) => ({ ...prev, ll: e.target.value }))
-            // }
-            // onChange={(e) =>
-            //   setLaps((prev) =>
-            //     prev.map((lap, index) =>
-            //       lap.id === index ? { ...lap, label: e.target.value } : lap,
-            //     ),
-            //   )
-            // }
             sx={{ mt: 1 }}
           />
         </DialogContent>
         <DialogActions>
-          <Button color="inherit" size="small" onClick={() => setEdit(false)}>
+          <Button
+            color="inherit"
+            size="small"
+            onClick={() => {
+              setEdit(false);
+              setEditingLapId(null);
+            }}
+          >
             Cancel
           </Button>
           <Button
