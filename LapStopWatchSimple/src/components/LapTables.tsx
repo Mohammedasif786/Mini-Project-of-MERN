@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
+import { useDataHandler } from "../context/timerHandling";
 
 type Lap = {
   id: number;
@@ -32,6 +33,11 @@ export default function LapTables({
   onEdit = () => {},
   onDelete = () => {},
 }: LapTablesProps) {
+  const dummy = {nanoSec: 0, Second: 0, Minute: 0, Hour: 0};
+  const { setEdit} = useDataHandler(dummy);
+  const EditLable =() => {
+    setEdit(true);
+  }
   return (
     <Box className="px-6 pb-6 bg-transparent">
       <Box className="flex items-center justify-between mt-3 mb-2">
@@ -111,7 +117,7 @@ export default function LapTables({
                   <Tooltip title="Edit label">
                     <IconButton
                       size="small"
-                      onClick={() => onEdit(lap)}
+                      onClick={() => {onEdit(lap),EditLable()}}
                       sx={{ color: "#6b7280" }}
                     >
                       <Edit fontSize="small" sx={{ fontSize: 13 }} />

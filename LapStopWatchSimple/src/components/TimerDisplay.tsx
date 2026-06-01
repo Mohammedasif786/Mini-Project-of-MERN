@@ -10,7 +10,7 @@ type TimerDisplayProps = {
 };
 
 export default function TimerDisplay({ displayTime }: TimerDisplayProps) {
-  const { startTime, setStartTime, isRunning  } =
+  const { startTime, setStartTime, isRunning, reset, setReset } =
     useDataHandler(displayTime);
   const { Hour, Minute, Second, nanoSec } = startTime ?? displayTime;
 
@@ -20,18 +20,23 @@ export default function TimerDisplay({ displayTime }: TimerDisplayProps) {
         const current = prev ?? displayTime;
         const { Hour, Minute, Second, nanoSec } = current;
 
+        if (reset) {
+          setReset(false);
+          return { Hour: 0, Minute: 0, Second: 0, nanoSec: 0 };
+        }
+
         if (Hour === 59 && Minute === 59 && Second === 59 && nanoSec === 99) {
           return { Hour: 0, Minute: 0, Second: 0, nanoSec: 0 };
+        }
+
+        if (!isRunning) {
+          return { Hour, Minute, Second, nanoSec };
         }
 
         const nextNano = nanoSec + 1;
         const nextSecond = nextNano > 99 ? Second + 1 : Second;
         const nextMinute = nextSecond > 59 ? Minute + 1 : Minute;
         const nextHour = nextMinute > 59 ? Hour + 1 : Hour;
-
-        if (!isRunning) {
-          return { Hour, Minute, Second, nanoSec };
-        }
 
         return {
           Hour: nextHour > 59 ? 0 : nextHour,
@@ -43,8 +48,14 @@ export default function TimerDisplay({ displayTime }: TimerDisplayProps) {
     }, 10);
 
     return () => window.clearInterval(interval);
-  }, [displayTime, isRunning, setStartTime]);
+  }, [displayTime, isRunning, reset, setReset, setStartTime]);
 
+  const CurrentTime = `${Hour.toString().padStart(2, "0")}:${Minute.toString().padStart(
+    2,
+    "0",
+  )}:${Second.toString().padStart(2, "0")}:${nanoSec
+    .toString()
+    .padStart(2, "0")}`;
   return (
     <Paper
       variant="outlined"
@@ -67,12 +78,7 @@ export default function TimerDisplay({ displayTime }: TimerDisplayProps) {
           letterSpacing: "0.1em",
         }}
       >
-        {`${Hour.toString().padStart(2, "0")}:${Minute.toString().padStart(
-          2,
-          "0",
-        )}:${Second.toString().padStart(2, "0")}:${nanoSec
-          .toString()
-          .padStart(2, "0")}`}
+        {reset ? "00:00:00:00" : CurrentTime}
       </Typography>
     </Paper>
   );

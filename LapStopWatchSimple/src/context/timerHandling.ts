@@ -1,9 +1,9 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, type Dispatch, type SetStateAction } from "react";
 export interface LapEntry {
   id: number;
   label: string;
-  lapTime: number;
-  totalTime: number;
+  lapTime: string;
+  totalTime: string;
 }
 
 export interface TimeFomartDisplay {
@@ -14,6 +14,10 @@ export interface TimeFomartDisplay {
 }
 
 export interface TimeContextType {
+  Edits: boolean;
+  setEdit: Dispatch<SetStateAction<boolean>>;
+  reset: boolean;
+  setReset: React.Dispatch<React.SetStateAction<boolean>>;
   elapsed: number;
   setElapsed: React.Dispatch<React.SetStateAction<number>>;
   isRunning: boolean;

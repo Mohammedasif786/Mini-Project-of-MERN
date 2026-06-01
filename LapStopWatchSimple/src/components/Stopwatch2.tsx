@@ -12,6 +12,8 @@ import ControlBtns from "./ControlBtns";
 import LapTables from "./LapTables";
 import TimerDisplay from "./TimerDisplay";
 import { useDataHandler } from "../context/timerHandling";
+import { useEffect, useState } from "react";
+import { Lan } from "@mui/icons-material";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
@@ -19,7 +21,14 @@ const displayTime = "00:00:00:00";
 const emptyDisplay = { Hour: 0, Minute: 0, Second: 0, nanoSec: 0 };
 const controlButtons = ["Start", "Pause", "Lap", "Reset"];
 
-const mockLaps = [
+type mockLaps = {
+  id: number;
+  label: string;
+  lapTime: string;
+  totalTime: string;
+};
+
+const mockLaps: mockLaps[] = [
   { id: 1, label: "Lap 1", lapTime: "00:00:01.98", totalTime: "00:00:01.98" },
   { id: 2, label: "Lap 2", lapTime: "00:00:00.00", totalTime: "00:00:01.98" },
   { id: 3, label: "Lap 3", lapTime: "00:00:07.84", totalTime: "00:00:09.82" },
@@ -38,7 +47,16 @@ export default function StopwatchBlueprint() {
     Hour: Number(displayTime.split(":").at(0)),
   };
 
-  const { startTime, startEngine } = useDataHandler(initialTime);
+  const { startTime, startEngine, laps, setLaps, Edits, setEdit } =
+    useDataHandler(initialTime);
+  // const [labelName, setLabelName] = useState("");
+  // const [Lname, setLName] = useState<string[]>([]);
+  const handleClick = () => {
+
+  }
+  const onEdit = () => {
+      setEdit(true);
+  }
   const timerDisplayValue = startTime ?? initialTime;
 
   return (
@@ -76,7 +94,8 @@ export default function StopwatchBlueprint() {
         </Box>
 
         <LapTables
-          laps={mockLaps}
+          // laps={mockLaps}
+          laps={laps}
           onAdd={() => console.log("Add lap")}
           onEdit={(lap) => console.log("Edit lap", lap)}
           onDelete={(lap) => console.log("Delete lap", lap)}
@@ -84,7 +103,7 @@ export default function StopwatchBlueprint() {
       </Paper>
 
       {/* ── Edit Label Dialog (static/open for preview) ── */}
-      <Dialog open={false} maxWidth="xs" fullWidth>
+      <Dialog open={Edits} maxWidth="xs" fullWidth>
         <DialogTitle sx={{ fontWeight: 700, fontSize: "1rem" }}>
           Edit Lap Label
         </DialogTitle>
@@ -94,14 +113,21 @@ export default function StopwatchBlueprint() {
             label="Label"
             defaultValue="Lap 1"
             size="small"
+            onChange={(e) =>
+              setLaps((prev) =>
+                prev.map((lap) =>
+                  lap.id === 1 ? { ...lap, label: e.target.value } : lap,
+                ),
+              )
+            }
             sx={{ mt: 1 }}
           />
         </DialogContent>
         <DialogActions>
-          <Button color="inherit" size="small">
+          <Button color="inherit" size="small" onClick={() => setEdit(false)}>
             Cancel
           </Button>
-          <Button variant="contained" size="small" sx={{ bgcolor: "#3b82f6" }}>
+          <Button variant="contained" size="small" sx={{ bgcolor: "#3b82f6" }} onClick={handleClick}>
             Save
           </Button>
         </DialogActions>

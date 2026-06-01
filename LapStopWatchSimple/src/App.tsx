@@ -13,8 +13,12 @@ function App() {
 
   const [intervalId, setIntervalId] = useState<number | null>(null);
   const [startEngine, setStartEngine] = useState<boolean>(false);
+  const [reset, setReset] = useState<boolean>(false);
+  const [Edits,setEdit] = useState<boolean>(false);
 
   const allWorkingData = {
+    Edits,
+    setEdit,
     elapsed,
     setElapsed,
     isRunning,
@@ -27,6 +31,8 @@ function App() {
     setIntervalId,
     startEngine,
     setStartEngine,
+    reset,
+    setReset,
   };
 
   return (
