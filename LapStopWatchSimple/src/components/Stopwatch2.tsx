@@ -49,14 +49,28 @@ export default function StopwatchBlueprint() {
 
   const { startTime, startEngine, laps, setLaps, Edits, setEdit } =
     useDataHandler(initialTime);
-  // const [labelName, setLabelName] = useState("");
-  // const [Lname, setLName] = useState<string[]>([]);
+  const [labelName, setLabelName] = useState("");
+  const [Lname, setLName] = useState<string[]>([]);
   const handleClick = () => {
-
-  }
-  const onEdit = () => {
-      setEdit(true);
-  }
+    setEdit(false);
+    console.log(Lname);
+    console.log(labelName);
+    setLaps((prev) =>
+      prev.map((lap, index) =>
+        lap.id === index ? { ...lap, label: Lname[index] } : lap,
+      ),
+    );
+    console.log(laps.map((v) => v.label));
+  };
+  const onEdit = (lap: mockLaps) => {
+    setEdit(true);
+    // setLName((prev) => [...prev, lap.label]);
+    setLName((prev) => {
+      const newLName = [...prev];
+      newLName[lap.id] = lap.label;
+      return newLName;
+    });
+  };
   const timerDisplayValue = startTime ?? initialTime;
 
   return (
@@ -94,10 +108,13 @@ export default function StopwatchBlueprint() {
         </Box>
 
         <LapTables
-          // laps={mockLaps}
           laps={laps}
           onAdd={() => console.log("Add lap")}
-          onEdit={(lap) => console.log("Edit lap", lap)}
+          // onEdit={(lap) => console.log("Edit lap", lap)}
+          // onEdit={onEdit}
+          onEdit={(lap) => {
+            onEdit(lap);
+          }}
           onDelete={(lap) => console.log("Delete lap", lap)}
         />
       </Paper>
@@ -113,13 +130,19 @@ export default function StopwatchBlueprint() {
             label="Label"
             defaultValue="Lap 1"
             size="small"
-            onChange={(e) =>
-              setLaps((prev) =>
-                prev.map((lap) =>
-                  lap.id === 1 ? { ...lap, label: e.target.value } : lap,
-                ),
-              )
-            }
+            // onChange={(e) => setLName((prev) => [...prev, e.target.value])}
+            // onChange={(e) => setLName((prev) => [...prev, e.target.value])}
+            onChange={(e) => setLabelName(e.target.value)}
+            // onChange={(e) =>
+            //   setLName1((prev) => ({ ...prev, ll: e.target.value }))
+            // }
+            // onChange={(e) =>
+            //   setLaps((prev) =>
+            //     prev.map((lap, index) =>
+            //       lap.id === index ? { ...lap, label: e.target.value } : lap,
+            //     ),
+            //   )
+            // }
             sx={{ mt: 1 }}
           />
         </DialogContent>
@@ -127,7 +150,12 @@ export default function StopwatchBlueprint() {
           <Button color="inherit" size="small" onClick={() => setEdit(false)}>
             Cancel
           </Button>
-          <Button variant="contained" size="small" sx={{ bgcolor: "#3b82f6" }} onClick={handleClick}>
+          <Button
+            variant="contained"
+            size="small"
+            sx={{ bgcolor: "#3b82f6" }}
+            onClick={handleClick}
+          >
             Save
           </Button>
         </DialogActions>
