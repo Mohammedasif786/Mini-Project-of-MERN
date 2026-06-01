@@ -6,10 +6,7 @@ type ControlBtnsProps = {
   onAction?: (label: string) => void;
 };
 
-export default function ControlBtns({
-  buttons,
-  onAction = () => {},
-}: ControlBtnsProps) {
+export default function ControlBtns({ buttons }: ControlBtnsProps) {
   let dummy = { Hour: 0, Minute: 0, Second: 0, nanoSec: 0 };
   const {
     setIsRunning,
@@ -18,7 +15,7 @@ export default function ControlBtns({
     startTime,
     setLaps,
     laps,
-    setReset
+    setReset,
   } = useDataHandler(dummy);
   const currentTime = {
     Hour: startTime?.Hour ?? 0,
@@ -118,7 +115,7 @@ ${time.nanoSec.toString().padStart(2, "0")}`.replace(/\s+/g, "");
           disableElevation
           disabled={startEngine && label === "Start" ? true : false}
           onClick={() => {
-            (AllLabels(index), onAction(label));
+            AllLabels(index);
           }}
           sx={{
             flex: 1,

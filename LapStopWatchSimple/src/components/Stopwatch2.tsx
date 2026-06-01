@@ -68,6 +68,9 @@ export default function StopwatchBlueprint() {
     setLabelName(lap.label);
     setEdit(true);
   };
+  const onDelete = (lap: mockLaps) => {
+    setLaps((prev) => prev.filter((l) => l.id !== lap.id));
+  }
   const timerDisplayValue = startTime ?? initialTime;
 
   return (
@@ -100,19 +103,16 @@ export default function StopwatchBlueprint() {
           />
           <ControlBtns
             buttons={controlButtons}
-            onAction={(label) => console.log(label)}
           />
         </Box>
 
         <LapTables
           laps={laps}
           onAdd={() => console.log("Add lap")}
-          // onEdit={(lap) => console.log("Edit lap", lap)}
-          // onEdit={onEdit}
           onEdit={(lap) => {
             onEdit(lap);
           }}
-          onDelete={(lap) => console.log("Delete lap", lap)}
+          onDelete={(lap) => onDelete(lap)}
         />
       </Paper>
 
